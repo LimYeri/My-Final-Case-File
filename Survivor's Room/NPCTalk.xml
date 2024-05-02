@@ -1,0 +1,110 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="fad51c3e-9e63-4a91-9bb1-c8c2f4a8a424" Language="Lua" Name="NPCTalk" Type="Component" Source="None" ModifyTime="2022-08-27T05:33:15.4454556+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="0" />
+  <Description />
+  <Properties>
+    <CodeBlockProperty Name="count" Type="number" DefaultValue="0" SyncDirection="None" />
+    <CodeBlockProperty Name="npcTalkData" Type="any" DefaultValue="nil" SyncDirection="None" />
+    <CodeBlockProperty Name="uiNameEntity" Type="Entity" DefaultValue="nil" SyncDirection="None" />
+    <CodeBlockProperty Name="uiMessageEntity" Type="Entity" DefaultValue="nil" SyncDirection="None" />
+    <CodeBlockProperty Name="uiTalkPanel" Type="Entity" DefaultValue="nil" SyncDirection="None" />
+    <CodeBlockProperty Name="uiPortraitEntity" Type="Entity" DefaultValue="nil" SyncDirection="None" />
+    <CodeBlockProperty Name="DiaryGo" Type="Entity" DefaultValue="nil" SyncDirection="All" />
+    <CodeBlockProperty Name="DiaryFindRule" Type="Entity" DefaultValue="nil" SyncDirection="All" />
+    <CodeBlockProperty Name="Show" Type="boolean" DefaultValue="false" SyncDirection="All" />
+    <CodeBlockProperty Name="Talk" Type="boolean" DefaultValue="false" SyncDirection="All" />
+  </Properties>
+  <Methods>
+    <CodeBlockMethod Name="ShowNextText" ExecSpace="All">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+local isNameEnable = false
+local isPortraitEnable = false
+
+local message = self.npcTalkData:GetCell(self.count, "text")
+
+if message == nil then
+self.uiTalkPanel.Enable = false
+self.Talk = true
+return
+else
+self.uiTalkPanel.Enable = true
+self.uiMessageEntity.TextComponent.Text = message
+end
+
+local name = self.npcTalkData:GetCell(self.count, "name")
+local portrait = self.npcTalkData:GetCell(self.count, "portrait")
+
+if name ~= "" then
+isNameEnable = true
+    self.uiNameEntity.TextComponent.Text = name
+end
+
+if portrait ~= "" then
+isPortraitEnable = true
+self.uiPortraitEntity.SpriteGUIRendererComponent.ImageRUID = portrait
+end
+
+self.uiNameEntity.Enable = isNameEnable
+self.uiPortraitEntity.Enable = isPortraitEnable
+
+self.count = self.count + 1
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="OnBeginPlay" ExecSpace="ClientOnly">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+self.count = 1
+self.npcTalkData = _DataService:GetTable("NPCTalk")
+self.uiNameEntity = _EntityService:GetEntityByPath("/ui/SurvivorTalk/TalkPanelSur/NameSur")
+self.uiMessageEntity = _EntityService:GetEntityByPath("/ui/SurvivorTalk/TalkPanelSur/TextSur")
+self.uiTalkPanel = _EntityService:GetEntityByPath("/ui/SurvivorTalk/TalkPanelSur")
+self.uiPortraitEntity = _EntityService:GetEntityByPath("/ui/SurvivorTalk/TalkPanelSur/PortraitSur")
+self.DiaryGo = _EntityService:GetEntityByPath("/ui/DiaryFindStart")
+self.DiaryFindRule = _EntityService:GetEntityByPath("/ui/FindDiaryRule")
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="ShowDiaryGo" ExecSpace="All">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+if self.Show == false then
+if self.DiaryGo.Enable == false and self.DiaryFindRule.Enable == false then
+	self.DiaryGo.Enable = true
+	self.DiaryFindRule.Enable = true
+	wait(5)
+	self.DiaryGo.Enable = false
+end
+self.Show = true
+end
+]]></Code>
+    </CodeBlockMethod>
+  </Methods>
+  <EntityEventHandlers>
+    <CodeBlockEntityEventHandler Name="HandleKeyDownEvent" EventName="KeyDownEvent" Target="service:InputService" Scope="All">
+      <Code><![CDATA[
+-- Parameters
+local key = event.key
+--------------------------------------------------------
+if key == KeyboardKey.Q then
+self:ShowNextText()
+	if self.Talk == true then
+		self:ShowDiaryGo()
+	end 
+end
+]]></Code>
+    </CodeBlockEntityEventHandler>
+    <CodeBlockEntityEventHandler Name="HandleButtonClickEvent" EventName="ButtonClickEvent" Target="entity:016818d4-2250-4336-9e50-6f73b8c56db4" Scope="All">
+      <Code><![CDATA[
+-- Parameters
+local Entity = event.Entity
+--------------------------------------------------------
+if self.DiaryFindRule.Enable == true then
+	self.DiaryFindRule.Enable = false
+end
+]]></Code>
+    </CodeBlockEntityEventHandler>
+  </EntityEventHandlers>
+</CodeBlockFile>

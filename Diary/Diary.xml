@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="a20f6c19-eae7-43ca-bd87-e35740523def" Language="Lua" Name="Diary" Type="Component" Source="None" ModifyTime="2022-08-26T00:22:31.6374154+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="0" />
+  <Description />
+  <Properties>
+    <CodeBlockProperty Name="OpenButton" Type="Entity" DefaultValue="71a0bdfe-9a6e-47fd-aa16-5c5ef018d32d" SyncDirection="All" />
+  </Properties>
+  <Methods>
+    <CodeBlockMethod Name="OnUpdate" ExecSpace="ClientOnly">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="delta" Type="number" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+local DiaryPos = self.Entity.TransformComponent.Position
+local UserPos = _UserService.LocalPlayer.TransformComponent.Position
+
+if math.abs(DiaryPos.x - UserPos.x) < 2 then
+	self.OpenButton:SetEnable(true)
+else self.OpenButton:SetEnable(false)
+end
+]]></Code>
+    </CodeBlockMethod>
+  </Methods>
+  <EntityEventHandlers />
+</CodeBlockFile>

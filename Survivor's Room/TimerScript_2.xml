@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="b2c76096-74b7-4029-9a07-122d0e832095" Language="Lua" Name="TimerScript_2" Type="Component" Source="None" ModifyTime="2022-08-26T01:53:33.2785698+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="0" />
+  <Description />
+  <Properties>
+    <CodeBlockProperty Name="time" Type="number" DefaultValue="0" SyncDirection="None" />
+    <CodeBlockProperty Name="text" Type="Component" DefaultValue="de38bf40-f0a8-44dc-8077-264b9b4ab8d4:TextComponent" SyncDirection="None" />
+    <CodeBlockProperty Name="sec" Type="number" DefaultValue="0" SyncDirection="None" />
+    <CodeBlockProperty Name="count" Type="boolean" DefaultValue="true" SyncDirection="None" />
+  </Properties>
+  <Methods>
+    <CodeBlockMethod Name="OnUpdate" ExecSpace="All">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="delta" Type="number" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+if not self.count then
+    return
+end
+
+self.time = self.time - delta
+
+if self.time <= 0 then
+	self.count = false
+	self.time = 0
+	self:ResetTimer(30)
+end
+
+self:SetTime(self.time)
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="SetTime" ExecSpace="All">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="time" Type="number" DefaultValue="0" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+time = math.floor(time)
+local m = time / 60
+local s = time % 60
+
+self.text.Text = string.format("%02d:%02d",m,s)
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="ResetTimer" ExecSpace="All">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="time" Type="number" DefaultValue="0" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+self.time = time
+self.count = true
+]]></Code>
+    </CodeBlockMethod>
+  </Methods>
+  <EntityEventHandlers>
+    <CodeBlockEntityEventHandler Name="HandleTriggerEnterEvent" EventName="TriggerEnterEvent" Target="self" Scope="All">
+      <Code><![CDATA[
+-- Parameters
+local TriggerBodyEntity = event.TriggerBodyEntity
+--------------------------------------------------------
+
+]]></Code>
+    </CodeBlockEntityEventHandler>
+  </EntityEventHandlers>
+</CodeBlockFile>

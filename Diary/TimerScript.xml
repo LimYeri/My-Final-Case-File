@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="283012ee-bdc2-41b0-9579-420d514e44b0" Language="Lua" Name="TimerScript" Type="Component" Source="None" ModifyTime="2022-08-24T23:50:27.9663305+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="0" />
+  <Description />
+  <Properties>
+    <CodeBlockProperty Name="time" Type="number" DefaultValue="0" SyncDirection="None" />
+    <CodeBlockProperty Name="text" Type="Component" DefaultValue="d4910c32-87f7-418c-aca7-1cbf2c359b56:TextComponent" SyncDirection="None" />
+    <CodeBlockProperty Name="sec" Type="number" DefaultValue="0" SyncDirection="None" />
+    <CodeBlockProperty Name="count" Type="boolean" DefaultValue="true" SyncDirection="None" />
+    <CodeBlockProperty Name="uiSOSgame" Type="Entity" DefaultValue="nil" SyncDirection="None" />
+    <CodeBlockProperty Name="GameStart" Type="boolean" DefaultValue="false" SyncDirection="None" />
+  </Properties>
+  <Methods>
+    <CodeBlockMethod Name="OnUpdate" ExecSpace="ClientOnly">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="delta" Type="number" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+if self.count == false then
+    	return
+elseif self.count == true and self.GameStart == true then 
+	self.time = self.time - delta
+	    
+	local sec = math.floor(self.time)
+	    
+	if self.sec ~= sec then
+	    	self.sec = sec
+	    	self:SetTime()
+		
+		if self.sec == 0 then
+			self.count = false
+		end
+	end
+end
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="SetTime" ExecSpace="ClientOnly">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+local m = (self.sec / 60) % 60
+local s = self.sec % 60
+    
+self.text.Text = string.format("%02d:%02d", m, s)
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="OnBeginPlay" ExecSpace="All">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+self.uiSOSgame = _EntityService:GetEntityByPath("/ui/Timer_DiaryFind")
+]]></Code>
+    </CodeBlockMethod>
+  </Methods>
+  <EntityEventHandlers />
+</CodeBlockFile>

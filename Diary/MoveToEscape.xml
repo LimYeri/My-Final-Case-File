@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="b1a9ae64-7807-4c5b-95fa-7d4738d88f95" Language="Lua" Name="MoveToEscape" Type="Component" Source="None" ModifyTime="2022-08-26T00:35:32.8051892+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="0" />
+  <Description />
+  <Properties />
+  <Methods />
+  <EntityEventHandlers />
+</CodeBlockFile>

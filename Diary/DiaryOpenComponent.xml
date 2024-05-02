@@ -1,0 +1,161 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="856d1fb2-9f15-4525-9312-9096fc2524bb" Language="Lua" Name="DiaryOpenComponent" Type="Component" Source="None" ModifyTime="2022-08-27T10:57:47.0635421+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="0" />
+  <Description />
+  <Properties>
+    <CodeBlockProperty Name="uiDiary" Type="Entity" DefaultValue="nil" SyncDirection="None" />
+    <CodeBlockProperty Name="uiDiaryDate" Type="Entity" DefaultValue="nil" SyncDirection="None" />
+    <CodeBlockProperty Name="uiDiaryContent" Type="Entity" DefaultValue="nil" SyncDirection="None" />
+    <CodeBlockProperty Name="count" Type="number" DefaultValue="1" SyncDirection="None" />
+    <CodeBlockProperty Name="Diarydata" Type="any" DefaultValue="nil" SyncDirection="None" />
+    <CodeBlockProperty Name="uiDiaryButton" Type="Entity" DefaultValue="nil" SyncDirection="None" />
+    <CodeBlockProperty Name="goSOSgame" Type="Entity" DefaultValue="nil" SyncDirection="None" />
+    <CodeBlockProperty Name="goEscape" Type="Entity" DefaultValue="nil" SyncDirection="None" />
+    <CodeBlockProperty Name="map5" Type="Entity" DefaultValue="nil" SyncDirection="None" />
+  </Properties>
+  <Methods>
+    <CodeBlockMethod Name="ShowDiary" ExecSpace="All">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+local isDateEnable = false
+self:ShowSOSpopup()
+
+if self.count == 5 then
+   self.uiDiaryButton.TextComponent.Text = "일기장 닫기"
+end
+
+--if self.count > 6 then
+	--return
+--end
+
+local Content = self.Diarydata:GetCell(self.count, "Content")
+
+if Content == nil then
+	self.uiDiary.Enable = false
+	return
+else
+	self.uiDiary.Enable = true
+	self.uiDiaryContent.TextComponent.Text = Content
+end
+
+local Date = self.Diarydata:GetCell(self.count, "Date")
+
+if Date ~= "" then
+	isDateEnable = true
+    self.uiDiaryDate.TextComponent.Text = Date
+end
+
+
+self.uiDiaryDate.Enable = isDateEnable
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="OnBeginPlay" ExecSpace="All">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+self.count = 1
+self.uiDiaryDate = _EntityService:GetEntityByPath("/ui/OpenDiary/DiarySprite/DiaryDate")
+self.uiDiaryContent = _EntityService:GetEntityByPath("/ui/OpenDiary/DiarySprite/DiaryContent")
+self.uiDiary = _EntityService:GetEntityByPath("/ui/OpenDiary/DiarySprite")
+self.Diarydata = _DataService:GetTable("DiaryDataSet")
+self.uiDiaryButton = _EntityService:GetEntityByPath("/ui/OpenDiary/DiarySprite/DiaryButton")
+self.goSOSgame = _EntityService:GetEntityByPath("/ui/goSOSgame") 
+self.goEscape = _EntityService:GetEntityByPath("/ui/ReadyEscape")
+self.map5 = _EntityService:GetEntityByPath("/maps/map05")
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="ShowButton" ExecSpace="All">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+self.uiDiaryButton.Enable = false
+wait(3)
+self.uiDiaryButton.Enable = true
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="ShowSOSpopup" ExecSpace="All">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+ if self.count == 3 then
+	if self.goSOSgame.Enable == false then
+		self.goSOSgame.Enable = true
+	end
+end
+
+if self.goSOSgame.Enable == true and self.uiDiaryButton.Enable then
+	self.uiDiaryButton.Enable = false
+else 
+	self.uiDiaryButton.Enable = true
+end
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="UpCount" ExecSpace="All">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+self.count = self.count + 1
+]]></Code>
+    </CodeBlockMethod>
+  </Methods>
+  <EntityEventHandlers>
+    <CodeBlockEntityEventHandler Name="HandleButtonClickEvent" EventName="ButtonClickEvent" Target="entity:d7e08313-5980-4825-a1e6-a7ed249c68ab" Scope="All">
+      <Code><![CDATA[
+-- Parameters
+local Entity = event.Entity
+--------------------------------------------------------
+if self.count >= 1 and self.count <= 5 then
+	self:ShowDiary()
+	self:UpCount()
+else
+	self.uiDiary.Enable = false
+	_UserService.LocalPlayer.MovementComponent.Enable = true
+	if self.goEscape.Enable == false then
+		--self.map5.SoundComponent:Stop()
+		self.goEscape.Enable = true
+		
+		wait(3)
+		self.goEscape.Enable = false
+		_UserService.LocalPlayer.PlayerComponent:MoveToEntityByPath("/maps/map03/object-19739")
+	end
+end
+]]></Code>
+    </CodeBlockEntityEventHandler>
+    <CodeBlockEntityEventHandler Name="HandleButtonClickEvent2" EventName="ButtonClickEvent" Target="entity:71a0bdfe-9a6e-47fd-aa16-5c5ef018d32d" Scope="All">
+      <Code><![CDATA[
+-- Parameters
+local Entity = event.Entity
+--------------------------------------------------------
+self.count = 1
+self:ShowDiary()
+self:UpCount()
+]]></Code>
+    </CodeBlockEntityEventHandler>
+    <CodeBlockEntityEventHandler Name="HandleButtonClickEvent3" EventName="ButtonClickEvent" Target="entity:a615dfac-5990-458c-8bb9-b7010702a631" Scope="All">
+      <Code><![CDATA[
+-- Parameters
+local Entity = event.Entity
+--------------------------------------------------------
+self.uiDiary.Enable = false
+self.goSOSgame.Enable = false
+]]></Code>
+    </CodeBlockEntityEventHandler>
+    <CodeBlockEntityEventHandler Name="HandleButtonClickEvent4" EventName="ButtonClickEvent" Target="entity:2c45450e-45b6-4c7a-a2bb-385bf0b87b73" Scope="All">
+      <Code><![CDATA[
+-- Parameters
+local Entity = event.Entity
+--------------------------------------------------------
+self.uiDiary.Enable = false
+self.goSOSgame.Enable = false
+]]></Code>
+    </CodeBlockEntityEventHandler>
+    <CodeBlockEntityEventHandler Name="HandleButtonClickEvent5" EventName="ButtonClickEvent" Target="entity:9af2cb65-2d74-4f4a-b03e-8d2aa84cec99" Scope="All">
+      <Code><![CDATA[
+-- Parameters
+local Entity = event.Entity
+--------------------------------------------------------
+if self.uiDiary.Enable == false and self.uiDiaryButton.Enable == false then
+	self.uiDiary.Enable = true
+	self.uiDiaryButton.Enable = true
+end
+]]></Code>
+    </CodeBlockEntityEventHandler>
+  </EntityEventHandlers>
+</CodeBlockFile>

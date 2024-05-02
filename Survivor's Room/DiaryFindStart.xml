@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="5bac9c26-6909-4a6f-9fad-a6d339b8a05a" Language="Lua" Name="DiaryFindStart" Type="Component" Source="None" ModifyTime="2022-08-27T08:23:58.4553809+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="0" />
+  <Description />
+  <Properties>
+    <CodeBlockProperty Name="DiaryGo" Type="Entity" DefaultValue="nil" SyncDirection="All" />
+    <CodeBlockProperty Name="DiaryFindRule" Type="Entity" DefaultValue="nil" SyncDirection="All" />
+    <CodeBlockProperty Name="Show" Type="boolean" DefaultValue="false" SyncDirection="All" />
+  </Properties>
+  <Methods>
+    <CodeBlockMethod Name="ShowDiaryGo" ExecSpace="All">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+if self.Show == false then
+if self.DiaryGo.Enable == false and self.DiaryFindRule.Enable == false then
+	self.DiaryGo.Enable = true
+	self.DiaryFindRule.Enable = true
+	wait(5)
+	self.DiaryGo.Enable = false
+end
+self.Show = true
+end
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="OnBeginPlay" ExecSpace="All">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+self.DiaryGo = _EntityService:GetEntityByPath("/ui/DiaryFindStart")
+self.DiaryFindRule = _EntityService:GetEntityByPath("/ui/FindDiaryRule") 
+]]></Code>
+    </CodeBlockMethod>
+  </Methods>
+  <EntityEventHandlers>
+    <CodeBlockEntityEventHandler Name="HandleTriggerEnterEvent" EventName="TriggerEnterEvent" Target="self" Scope="All">
+      <Code><![CDATA[
+-- Parameters
+local TriggerBodyEntity = event.TriggerBodyEntity
+--------------------------------------------------------
+if TriggerBodyEntity.Id == _UserService.LocalPlayer.Id then
+	self:ShowDiaryGo()
+end
+]]></Code>
+    </CodeBlockEntityEventHandler>
+    <CodeBlockEntityEventHandler Name="HandleButtonClickEvent" EventName="ButtonClickEvent" Target="entity:016818d4-2250-4336-9e50-6f73b8c56db4" Scope="All">
+      <Code><![CDATA[
+-- Parameters
+local Entity = event.Entity
+--------------------------------------------------------
+if self.DiaryFindRule.Enable == true then
+	self.DiaryFindRule.Enable = false
+	self.DiaryGo.Enable = false
+end
+]]></Code>
+    </CodeBlockEntityEventHandler>
+  </EntityEventHandlers>
+</CodeBlockFile>

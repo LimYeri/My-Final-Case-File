@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="33df31c5-86e8-4a3c-9d46-65dbe91daa5b" Language="Lua" Name="DiaryFind" Type="Component" Source="None" ModifyTime="2022-08-26T01:46:19.8826689+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="0" />
+  <Description />
+  <Properties>
+    <CodeBlockProperty Name="DiaryF" Type="Entity" DefaultValue="6e42e1f1-b6b7-48ad-9e39-97744c9f6958" SyncDirection="All" />
+    <CodeBlockProperty Name="TimeStop" Type="Component" DefaultValue="de38bf40-f0a8-44dc-8077-264b9b4ab8d4:TimerScript_2" SyncDirection="None" />
+    <CodeBlockProperty Name="OpenButton" Type="Entity" DefaultValue="71a0bdfe-9a6e-47fd-aa16-5c5ef018d32d" SyncDirection="All" />
+  </Properties>
+  <Methods>
+    <CodeBlockMethod Name="OnUpdate" ExecSpace="ClientOnly">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="delta" Type="number" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+local StoragePos = self.Entity.TransformComponent.Position
+local UserPos = _UserService.LocalPlayer.TransformComponent.Position
+
+if math.abs(StoragePos.x - UserPos.x) < 0.2 and math.abs(StoragePos.y - UserPos.y) < 0.3 then
+	self.DiaryF:SetEnable(true)
+	if self.OpenButton.Enable == false then
+		self.OpenButton.Enable = true
+	end
+	if self.DiaryF.Enable == true and self.TimeStop.count == true then
+		self.TimeStop.count = false 
+	end
+else self.DiaryF:SetEnable(false)
+	self.OpenButton:SetEnable(false)
+end
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="OnBeginPlay" ExecSpace="ClientOnly">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+self.OpenButton = _EntityService:GetEntityByPath("/maps/map05/OpenButton")
+]]></Code>
+    </CodeBlockMethod>
+  </Methods>
+  <EntityEventHandlers />
+</CodeBlockFile>

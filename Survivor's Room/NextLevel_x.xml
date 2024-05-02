@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="9a19f891-ff03-4ff2-87e4-3e298aff7f7f" Language="Lua" Name="NextLevel_x" Type="Component" Source="None" ModifyTime="2022-08-27T04:33:31.4888706+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="0" />
+  <Description />
+  <Properties>
+    <CodeBlockProperty Name="NextLev_X" Type="Entity" DefaultValue="nil" SyncDirection="All" />
+  </Properties>
+  <Methods>
+    <CodeBlockMethod Name="OnBeginPlay" ExecSpace="All">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+self.NextLev_X = _EntityService:GetEntityByPath("/ui/NextMessage")
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="NextLevelMessageX" ExecSpace="All">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+if self.NextLev_X.Enable == true then
+	self.NextLev_X.Enable = false
+end
+]]></Code>
+    </CodeBlockMethod>
+  </Methods>
+  <EntityEventHandlers>
+    <CodeBlockEntityEventHandler Name="HandleTriggerEnterEvent" EventName="TriggerEnterEvent" Target="self" Scope="All">
+      <Code><![CDATA[
+-- Parameters
+local TriggerBodyEntity = event.TriggerBodyEntity
+--------------------------------------------------------
+if _UserService.LocalPlayer ~= nil then 
+	if TriggerBodyEntity.Id == _UserService.LocalPlayer.Id then
+		self:NextLevelMessageX()
+	end
+end
+]]></Code>
+    </CodeBlockEntityEventHandler>
+  </EntityEventHandlers>
+</CodeBlockFile>

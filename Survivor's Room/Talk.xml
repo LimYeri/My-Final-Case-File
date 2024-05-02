@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="29beaa56-3556-450b-8a0a-648b788ff676" Language="Lua" Name="Talk" Type="Component" Source="None" ModifyTime="2022-08-27T08:23:35.1063898+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="0" />
+  <Description />
+  <Properties>
+    <CodeBlockProperty Name="TalkMessage" Type="Entity" DefaultValue="nil" SyncDirection="All" />
+    <CodeBlockProperty Name="uiGoSurvivor" Type="Entity" DefaultValue="nil" SyncDirection="All" />
+    <CodeBlockProperty Name="Show" Type="boolean" DefaultValue="false" SyncDirection="All" />
+  </Properties>
+  <Methods>
+    <CodeBlockMethod Name="ShowTM" ExecSpace="All">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+if self.Show == false then
+if self.TalkMessage.Enable == false and self.uiGoSurvivor.Enable == false then
+	self.TalkMessage.Enable = true
+	self.uiGoSurvivor.Enable = true
+	wait(5)
+	self.TalkMessage.Enable = false
+end
+self.Show = true
+end
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="OnBeginPlay" ExecSpace="All">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+self.TalkMessage = _EntityService:GetEntityByPath("/ui/TalkMessage")
+self.uiGoSurvivor = _EntityService:GetEntityByPath("/ui/GoSurvivor")
+]]></Code>
+    </CodeBlockMethod>
+  </Methods>
+  <EntityEventHandlers>
+    <CodeBlockEntityEventHandler Name="HandleTriggerEnterEvent" EventName="TriggerEnterEvent" Target="self" Scope="All">
+      <Code><![CDATA[
+-- Parameters
+local TriggerBodyEntity = event.TriggerBodyEntity
+--------------------------------------------------------
+if TriggerBodyEntity.Id == _UserService.LocalPlayer.Id then
+	self:ShowTM(	)
+end
+]]></Code>
+    </CodeBlockEntityEventHandler>
+    <CodeBlockEntityEventHandler Name="HandleButtonClickEvent" EventName="ButtonClickEvent" Target="entity:7d422fae-b089-4791-9961-876e636e1174" Scope="All">
+      <Code><![CDATA[
+-- Parameters
+local Entity = event.Entity
+--------------------------------------------------------
+if self.uiGoSurvivor.Enable == true then
+	self.uiGoSurvivor.Enable = false
+	self.TalkMessage.Enable = false
+end
+]]></Code>
+    </CodeBlockEntityEventHandler>
+  </EntityEventHandlers>
+</CodeBlockFile>

@@ -1,0 +1,308 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="b94b86e7-0228-46b0-8b0b-2d63de67e4c7" Language="Lua" Name="SOSgameComponent" Type="Component" Source="None" ModifyTime="2022-08-27T10:47:16.8212638+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="0" />
+  <Description />
+  <Properties>
+    <CodeBlockProperty Name="randomKey" Type="any" DefaultValue="nil" SyncDirection="None" />
+    <CodeBlockProperty Name="uiSOSbox" Type="Entity" DefaultValue="nil" SyncDirection="None" />
+    <CodeBlockProperty Name="uiSOSgame" Type="Entity" DefaultValue="nil" SyncDirection="None" />
+    <CodeBlockProperty Name="SOSbtn" Type="Entity" DefaultValue="nil" SyncDirection="None" />
+    <CodeBlockProperty Name="current" Type="number" DefaultValue="0" SyncDirection="None" />
+    <CodeBlockProperty Name="SOSredBtn" Type="table" DefaultValue="{}" SyncDirection="None" />
+    <CodeBlockProperty Name="TimerScript" Type="Component" DefaultValue="d4910c32-87f7-418c-aca7-1cbf2c359b56:TimerScript" SyncDirection="None" />
+    <CodeBlockProperty Name="LastBtn" Type="Entity" DefaultValue="nil" SyncDirection="None" />
+    <CodeBlockProperty Name="failPopup" Type="Entity" DefaultValue="nil" SyncDirection="None" />
+    <CodeBlockProperty Name="sucessPopup" Type="Entity" DefaultValue="nil" SyncDirection="None" />
+    <CodeBlockProperty Name="fail" Type="boolean" DefaultValue="false" SyncDirection="None" />
+    <CodeBlockProperty Name="sucess" Type="boolean" DefaultValue="false" SyncDirection="None" />
+    <CodeBlockProperty Name="LastSucess" Type="boolean" DefaultValue="false" SyncDirection="None" />
+    <CodeBlockProperty Name="uiRules" Type="Entity" DefaultValue="nil" SyncDirection="None" />
+    <CodeBlockProperty Name="map5" Type="Entity" DefaultValue="471f820b-1ec2-41a4-9418-9d9a4e85fec6" SyncDirection="None" />
+    <CodeBlockProperty Name="uiSOStimer" Type="Entity" DefaultValue="nil" SyncDirection="None" />
+  </Properties>
+  <Methods>
+    <CodeBlockMethod Name="OnBeginPlay" ExecSpace="All">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+self.randomKey = _DataService:GetTable("SOSkeyData")
+self.uiSOSbox = _EntityService:GetEntityByPath("/ui/SOSgame/SOSbasebox/SOSbox")
+self.uiSOSgame = _EntityService:GetEntityByPath("/ui/SOSgame")
+self.LastBtn = self.uiSOSbox:GetChildByName("RandomBtn_116") 
+self.failPopup = _EntityService:GetEntityByPath("/ui/SOSfailPopup")
+self.sucessPopup = _EntityService:GetEntityByPath("/ui/SOSsucessPopup")
+self.uiRules = _EntityService:GetEntityByPath("/ui/SOSgameRules")
+self.map5 = _EntityService:GetEntityByPath("/maps/map05")
+self.uiSOStimer = _EntityService:GetEntityByPath("/ui/SOSgame/SOSbasebox/SOStimer")
+self.SOSredBtn = {15, 19, 23, 27, 29, 31, 33, 35, 37, 40, 44, 46, 48, 54, 57, 59, 62, 68, 70, 72, 76, 79, 81, 83, 85, 87, 89, 93, 97, 101}
+self:AgainSetting()
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="SOSsetting" ExecSpace="All">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+for i = 0, 116 do
+	self.SOSbtn = self.uiSOSbox:GetChildByName("RandomBtn_"..tostring(i))
+	if self.SOSbtn ~= nil then
+		self.SOSbtn.TextComponent.Text = self.randomKey:GetCell(math.random(1, 5), "key")
+	end
+	self:SetBeginColor(i)
+end
+self:SOSgame()
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="SOSgame" ExecSpace="All">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+self.SOSbtn = self.uiSOSbox:GetChildByName("RandomBtn_"..tostring(math.floor(self.current)))
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="UpCurrent" ExecSpace="All">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+self.current = self.current + 1
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="wrongKey" ExecSpace="All">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="num" Type="number" DefaultValue="0" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+for i = num, self.current - 1 do
+	self.SOSbtn = self.uiSOSbox:GetChildByName("RandomBtn_"..tostring(math.floor(i)))
+	if self.SOSbtn ~= nil then
+		self.SOSbtn.TextComponent.Text = self.randomKey:GetCell(math.random(1, 5), "key")
+	end
+	self:SetBeginColor(i)
+end
+self.current = num
+self:SOSgame()
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="FailPopup" ExecSpace="All">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+if self.failPopup.Enable == false and self.sucess == false then
+	self.failPopup.Enable = true
+	self.TimerScript.GameStart = false
+	--self.current = 0
+end
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="SucessPopup" ExecSpace="All">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+if self.sucessPopup.Enable == false then
+	self.sucessPopup.Enable = true
+	self.sucess = true
+	self.LastSucess = true
+end
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="SetBeginColor" ExecSpace="All">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="num" Type="number" DefaultValue="0" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+for _,v in pairs(self.SOSredBtn) do
+	if v == math.floor(num) then
+		self.SOSbtn.SpriteGUIRendererComponent.Color = Color(0, 0.027, 1, 1)
+		break
+	else 
+		self.SOSbtn.SpriteGUIRendererComponent.Color = Color(0.41, 0.41, 0.41, 1)
+	end
+end
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="AgainSetting" ExecSpace="All">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+self:SOSsetting()
+self.fail = false
+self.sucess = false
+--self.GoFail = false
+self.current = 0
+self.TimerScript.time = 60
+self.uiRules.Enable = false
+self.uiSOStimer.TextComponent.Text = "01:00"
+]]></Code>
+    </CodeBlockMethod>
+  </Methods>
+  <EntityEventHandlers>
+    <CodeBlockEntityEventHandler Name="HandleKeyDownEvent" EventName="KeyDownEvent" Target="service:InputService" Scope="All">
+      <Code><![CDATA[
+-- Parameters
+local key = event.key
+--------------------------------------------------------
+if Environment:IsPlay() == true then
+if self.uiSOSgame.Enable == true and  self.failPopup.Enable == false and self.uiRules.Enable == false then
+	if key == KeyboardKey.LeftArrow then
+   		key = "←"
+	elseif key == KeyboardKey.UpArrow then
+      	key = "↑"
+	elseif key == KeyboardKey.DownArrow then
+      	key = "↓"
+	elseif key == KeyboardKey.RightArrow then
+      	key = "→"
+	elseif key == KeyboardKey.Space  then
+      	key = "S"
+	else
+   		key = ""
+	end
+	if self.SOSbtn ~= nil then
+		if key == self.SOSbtn.TextComponent.Text then
+			for _,v in pairs(self.SOSredBtn) do
+				if v == math.floor(self.current) then
+					self.SOSbtn.SpriteGUIRendererComponent.Color = Color.red
+					break
+				else 
+					self.SOSbtn.SpriteGUIRendererComponent.Color = Color.white
+				end
+			end
+			self.SOSbtn.TextComponent.Text = ""
+			self:UpCurrent()
+			self:SOSgame()
+			if self.TimerScript.count == true and self.LastBtn.SpriteGUIRendererComponent.Color == Color.white then
+				self:SucessPopup()
+				self.TimerScript.count = false
+			end
+		else 
+			if self.current >= 4 then
+				self:wrongKey(self.current - 4)
+			else self:wrongKey(0)
+			end
+			
+   		end
+	end
+end
+end
+]]></Code>
+    </CodeBlockEntityEventHandler>
+    <CodeBlockEntityEventHandler Name="HandleButtonClickEvent" EventName="ButtonClickEvent" Target="entity:a615dfac-5990-458c-8bb9-b7010702a631" Scope="All">
+      <Code><![CDATA[
+-- 첫 시작 랜덤 키 세팅
+local Entity = event.Entity
+--------------------------------------------------------
+if self.uiSOSgame.Enable == false then
+	self.uiSOSgame.Enable = true
+	self:SOSsetting()
+	--self.map5.SoundComponent:Pause()
+end
+]]></Code>
+    </CodeBlockEntityEventHandler>
+    <CodeBlockEntityEventHandler Name="HandleKeyDownEvent2" EventName="KeyDownEvent" Target="service:InputService" Scope="All">
+      <Code><![CDATA[
+-- 첫 키 누르면 게임 시작
+local key = event.key
+--------------------------------------------------------
+if Environment:IsPlay() == true then
+if self.uiSOSgame.Enable == true and self.uiRules.Enable == false then
+	if math.floor(self.current) == 1 and self.fail == false then
+		--self.map5.SoundComponent.AudioClipRUID = "2de176cd6a9f496caf8c2bd06e961838"
+		--self.map5.SoundComponent.Loop = true
+		--self.map5.SoundComponent:Play()
+		self.TimerScript.GameStart = true
+		self.TimerScript.count = true
+		self.fail = true
+		wait(60)
+		if self.LastSucess == false then
+			self:FailPopup()
+		end
+		self.LastSucess = false
+	end
+end
+if self.uiSOSgame.Enable == true then
+	_UserService.LocalPlayer.MovementComponent.Enable = false
+end
+end
+]]></Code>
+    </CodeBlockEntityEventHandler>
+    <CodeBlockEntityEventHandler Name="HandleButtonClickEvent2" EventName="ButtonClickEvent" Target="entity:2f2caa8f-51a5-4525-93fb-6a2f9db4af66" Scope="All">
+      <Code><![CDATA[
+-- 실패 팝업 OK
+-- 실패시 다시 게임 세팅
+local Entity = event.Entity
+-------------------------------------------------------
+self.current = 0
+if self.failPopup.Enable == true then
+	self.failPopup.Enable = false
+	self:AgainSetting()
+end
+]]></Code>
+    </CodeBlockEntityEventHandler>
+    <CodeBlockEntityEventHandler Name="HandleButtonClickEvent3" EventName="ButtonClickEvent" Target="entity:9af2cb65-2d74-4f4a-b03e-8d2aa84cec99" Scope="All">
+      <Code><![CDATA[
+-- 성공 팝업 OK
+local Entity = event.Entity
+--------------------------------------------------------
+_UserService.LocalPlayer.MovementComponent.Enable = true
+if self.sucessPopup.Enable == true then
+	self.uiSOSgame.Enable = false
+	--self.map5.SoundComponent:Pause()
+	--self.map5.SoundComponent.AudioClipRUID = "2f6c3b7579d04d1297ff1f913a4788b9"
+	--self.map5.SoundComponent.Loop = true
+	--self.map5.SoundComponent:Play()
+	self.sucessPopup.Enable = false
+	self:AgainSetting()
+end
+]]></Code>
+    </CodeBlockEntityEventHandler>
+    <CodeBlockEntityEventHandler Name="HandleButtonClickEvent4" EventName="ButtonClickEvent" Target="entity:775bd91d-4e17-4310-bb3a-fc863d50bfdd" Scope="All">
+      <Code><![CDATA[
+-- 실패 팝업 Cancel
+local Entity = event.Entity
+--------------------------------------------------------
+_UserService.LocalPlayer.MovementComponent.Enable = true
+if self.failPopup.Enable == true and self.uiSOSgame.Enable == true then
+	self.failPopup:SetEnable(false)
+	self.uiSOSgame:SetEnable(false)
+	self:AgainSetting()
+	--self.map5.SoundComponent:Pause()
+	--self.map5.SoundComponent.AudioClipRUID = "2f6c3b7579d04d1297ff1f913a4788b9"
+	--self.map5.SoundComponent.Loop = true
+	--self.map5.SoundComponent:Play()
+end
+]]></Code>
+    </CodeBlockEntityEventHandler>
+    <CodeBlockEntityEventHandler Name="HandleButtonClickEvent5" EventName="ButtonClickEvent" Target="entity:ad39de63-900a-4fe0-96f5-0adbac559041" Scope="All">
+      <Code><![CDATA[
+-- 성공 팝업 Cancel
+local Entity = event.Entity
+--------------------------------------------------------
+_UserService.LocalPlayer.MovementComponent.Enable = true
+if self.sucessPopup.Enable == true and self.uiSOSgame.Enable ==true then
+	self.sucessPopup:SetEnable(false)
+	self.uiSOSgame:SetEnable(false)
+	--self.map5.SoundComponent:Pause()
+	--self.map5.SoundComponent.AudioClipRUID = "2f6c3b7579d04d1297ff1f913a4788b9"
+	--self.map5.SoundComponent.Loop = true
+	--self.map5.SoundComponent:Play()
+	self:AgainSetting()
+end
+]]></Code>
+    </CodeBlockEntityEventHandler>
+    <CodeBlockEntityEventHandler Name="HandleButtonClickEvent6" EventName="ButtonClickEvent" Target="entity:ea4691a1-ca81-4ab1-8f7f-c7b14a04e01d" Scope="All">
+      <Code><![CDATA[
+-- Parameters
+local Entity = event.Entity
+--------------------------------------------------------
+if self.uiRules.Enable == false then
+	self.uiRules.Enable = true
+end 
+]]></Code>
+    </CodeBlockEntityEventHandler>
+    <CodeBlockEntityEventHandler Name="HandleButtonClickEvent7" EventName="ButtonClickEvent" Target="entity:08bd5340-08a5-4470-9440-c26bca4a2b87" Scope="All">
+      <Code><![CDATA[
+-- Parameters
+local Entity = event.Entity
+--------------------------------------------------------
+if self.uiRules.Enable == true then
+	self.uiRules.Enable = false
+end
+]]></Code>
+    </CodeBlockEntityEventHandler>
+  </EntityEventHandlers>
+</CodeBlockFile>
