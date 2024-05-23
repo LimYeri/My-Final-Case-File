@@ -21,7 +21,7 @@
 
 **👩🏻‍💻나(LimYeri)의 역할:**
     
-    [Backend / DB / Server]
+    [Backend]
     
        -Team Leader
 
